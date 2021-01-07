@@ -49,6 +49,11 @@ app.post('/api/courses', (req,res) => {
         // };
 
         // const result = Joi.validate(req.body, schema);
+
+        // if (result.error) {
+        //     res.status(400).send(result.error.details[0].message);
+        //     return;
+        // }
         // console.log (result);
 
     const course ={
@@ -60,6 +65,30 @@ app.post('/api/courses', (req,res) => {
 })
 
 //PUT requests
+app.put('/api/courses/:id', (req, res) => {
+    //look up course
+    //if it doesnt exist return 404 error
+    const course = courses.find(c => c.id === parseInt(req.params.id));
+    if (!course) res.status(404).send('The course with that given ID was not found')
+    res.send(course);
+
+    //Validate
+    //if invalid return 400 error
+    const schema = {
+        name: Joi.string().min(3).required
+    };
+    const {error} = Joi.validate(req.body, schema);
+    if (error) {
+        res.status(400).send(error.details[0].message);
+        return;
+    }
+
+    //update course 
+    //return updated course
+    course.name = req.body.name;
+    res.send(course);
+
+})
 
 //Litening port | Enviroment variable
 
